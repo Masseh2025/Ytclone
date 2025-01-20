@@ -1,11 +1,19 @@
-import { Menu, Upload, Bell, User, Mic, Search } from "lucide-react";
+import { Menu, Upload, Bell, User, Mic, Search, ArrowLeft } from "lucide-react";
 import logo from "../assets/Logo.png";
 import { Button } from "../components/Button";
+import { useState } from "react";
 
 export default function PageHeader() {
+  const [showFullWidthSearch, setShowFullWidthSearch] = useState(false);
   return (
     <div className="flex gap-10 lg:gap-20 justify-between pt-2 mb-6 mx-4">
-      <div className="flex gap-4 items-center flex-shrink-0">
+      <div
+        className={
+          showFullWidthSearch
+            ? "gap-4 items-center flex-shrink-0 hidden"
+            : "gap-4 items-center flex-shrink-0 flex"
+        }
+      >
         <Button
           type="button"
           varient="ghost"
@@ -18,7 +26,24 @@ export default function PageHeader() {
           <img src={logo} alt="logo" className="h-6" />
         </a>
       </div>
-      <form className="flex gap-4 flex-grow justify-center">
+      <form
+        className={
+          showFullWidthSearch
+            ? "gap-4 flex-grow justify-center flex"
+            : "md:flex gap-4 flex-grow justify-center hidden"
+        }
+      >
+        {showFullWidthSearch && (
+          <Button
+            type="button"
+            onClick={() => setShowFullWidthSearch(false)}
+            size="icon"
+            className="flex-shrink-0"
+            varient="ghost"
+          >
+            <ArrowLeft />
+          </Button>
+        )}
         <div className="flex flex-grow max-w-[600px]">
           <input
             type="search"
@@ -29,11 +54,28 @@ export default function PageHeader() {
             <Search />
           </Button>
         </div>
-        <Button size="icon">
+        <Button type="button" size="icon" className="flex-shrink-0">
           <Mic />
         </Button>
       </form>
-      <div className="flex flex-shrink-0 md:gap-2">
+      <div
+        className={
+          showFullWidthSearch
+            ? "flex-shrink-0 md:gap-2 hidden"
+            : "flex-shrink-0 md:gap-2 flex"
+        }
+      >
+        <Button
+          onClick={() => setShowFullWidthSearch(true)}
+          size="icon"
+          varient="ghost"
+          className="md:hidden"
+        >
+          <Search />
+        </Button>
+        <Button size="icon" varient="ghost" className="md:hidden">
+          <Mic />
+        </Button>
         <Button size="icon" varient="ghost">
           <Upload />
         </Button>
