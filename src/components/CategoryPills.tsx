@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "./Button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type CategoryPillProps = {
   categories: string[];
@@ -19,10 +19,29 @@ export function CategoryPills({
   const [isLeftVisible, setIsLeftVisible] = useState(false);
   const [isRightVisible, setIsRightVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current === null) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const container = entries[0]?.target;
+
+      if (container === null) return;
+      setIsLeftVisible(translate > 0);
+      setIsRightVisible(
+        translate + container.clientWidth < container.scrollWidth
+      );
+    });
+
+    observer.observe(containerRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [categories, translate]);
+
   return (
-    <div className="overflow-x-hidden relative">
+    <div ref={containerRef} className="overflow-x-hidden relative">
       <div
-        ref={containerRef}
         className="flex whitespace-nowrap gap-3 transition-transform w-max"
         style={{ transform: `translateX(-${translate}px)` }}
       >
@@ -62,7 +81,16 @@ export function CategoryPills({
             size="icon"
             className="h-full aspect-square w-auto p-1.5"
             onClick={() => {
-              console.log("hi");
+              setTranslate((translate) => {
+                if (containerRef.current === null) return translate;
+                const newTranslate = translate + TRANSLATE_AMOUNT;
+                const edge = containerRef.current.scrollWidth;
+                const width = containerRef.current.clientWidth;
+                if (newTranslate + width >= edge) {
+                  return edge - width;
+                }
+                return newTranslate;
+              });
             }}
           >
             <ChevronRightIcon />
