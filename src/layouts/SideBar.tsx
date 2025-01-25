@@ -26,11 +26,20 @@ import { Children, ElementType, useState } from "react";
 import { Button, buttonStyles } from "../components/Button";
 import { twMerge } from "tailwind-merge";
 import { playlists, subscriptions } from "../data/sidebar";
+import { useSidebarContext } from "../contexts/Sidebarcontext";
+import { PageHeaderFirstSection } from "./PageHeader";
 
 export function Sidebar() {
+  const { isLargeOpen, isSmallOpen, close } = useSidebarContext();
   return (
     <>
-      <aside className="sticky top-0 overflow-y-auto scrollbar-hidden pb-4 flex flex-col ml-1 lg:hidden">
+      <aside
+        className={
+          isLargeOpen
+            ? `sticky top-0 overflow-y-auto scrollbar-hidden pb-4 flex flex-col ml-1 lg:hidden`
+            : `sticky top-0 overflow-y-auto scrollbar-hidden pb-4 flex flex-col ml-1 lg:flex`
+        }
+      >
         <SmallSideBarItem Icon={Home} title="Home" url="/" />
         <SmallSideBarItem Icon={Repeat} title="Shorts" url="/shorts" />
         <SmallSideBarItem
@@ -40,7 +49,20 @@ export function Sidebar() {
         />
         <SmallSideBarItem Icon={Library} title="Library" url="/library" />
       </aside>
-      <aside className="w-56 lg:sticky absolute top-0 overflow-y-auto scrollbar-hidden pb-4 flex-col gap-2 px-2 lg:flex hidden">
+      {isSmallOpen && (
+        <div
+          onClick={close}
+          className="lg:hidden fixed inset-0 z-[999] bg-secondary-dark opacity-50"
+        />
+      )}
+      <aside
+        className={`w-56 lg:sticky absolute top-0 overflow-y-scroll pb-4 flex-col gap-2 px-2 ${
+          isLargeOpen ? "lg:flex" : "lg:hidden"
+        } ${isSmallOpen ? "flex z-[999] bg-white max-h-screen" : "hidden"}`}
+      >
+        <div className="lg:hidden pt-2 pb-4 px-2 sticky top-0 bg-white">
+          <PageHeaderFirstSection />
+        </div>
         <LargeSideBarSection visibleItemCount={1}>
           <LargeSideBarItem isActive IconOrImgUrl={Home} title="Home" url="/" />
           <LargeSideBarItem
@@ -92,7 +114,7 @@ export function Sidebar() {
           ))}
         </LargeSideBarSection>
         <hr />
-        <LargeSideBarSection title="Explore">
+        <LargeSideBarSection title="Explore" visibleItemCount={5}>
           <LargeSideBarItem
             IconOrImgUrl={Flame}
             title="Trending"
