@@ -2,13 +2,30 @@ import {
   ChevronDown,
   ChevronUp,
   Clapperboard,
+  Clock,
+  Film,
+  Flame,
+  Gamepad2,
+  History,
   Home,
   Library,
+  LibraryIcon,
+  Lightbulb,
+  ListVideo,
+  Music2,
+  Newspaper,
+  PlaySquare,
+  Podcast,
+  Radio,
   Repeat,
+  Shirt,
+  ShoppingBag,
+  Trophy,
 } from "lucide-react";
 import { Children, ElementType, useState } from "react";
 import { Button, buttonStyles } from "../components/Button";
 import { twMerge } from "tailwind-merge";
+import { playlists, subscriptions } from "../data/sidebar";
 
 export function Sidebar() {
   return (
@@ -23,16 +40,103 @@ export function Sidebar() {
         />
         <SmallSideBarItem Icon={Library} title="Library" url="/library" />
       </aside>
-      <aside className="w-56 lg:sticky absolute top-0 overflow-y-auto scrollbar-hidden pb-4 flex-col gap-2 px-2 flex">
+      <aside className="w-56 lg:sticky absolute top-0 overflow-y-auto scrollbar-hidden pb-4 flex-col gap-2 px-2 lg:flex hidden">
         <LargeSideBarSection visibleItemCount={1}>
-          <LargeSideBarItem isActive Icon={Home} title="Home" url="/" />
+          <LargeSideBarItem isActive IconOrImgUrl={Home} title="Home" url="/" />
           <LargeSideBarItem
-            Icon={Clapperboard}
+            IconOrImgUrl={Clapperboard}
             title="Subscriptions"
             url="/subscriptions"
           />
         </LargeSideBarSection>
-        <hr></hr>
+        <hr />
+        <LargeSideBarSection visibleItemCount={5}>
+          <LargeSideBarItem
+            IconOrImgUrl={LibraryIcon}
+            title="Library"
+            url="/library"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={History}
+            title="History"
+            url="/history"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={PlaySquare}
+            title="Your Videos"
+            url="/your-videos"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={Clock}
+            title="Watch Later"
+            url="/playlist?list=WL"
+          />
+          {playlists.map((playlist) => (
+            <LargeSideBarItem
+              IconOrImgUrl={ListVideo}
+              key={playlist.id}
+              title={playlist.name}
+              url={`/playlist?list=${playlist.id}`}
+            />
+          ))}
+        </LargeSideBarSection>
+        <hr />
+        <LargeSideBarSection title="Subscriptions">
+          {subscriptions.map((subscription) => (
+            <LargeSideBarItem
+              key={subscription.id}
+              IconOrImgUrl={subscription.imgUrl}
+              title={subscription.channelName}
+              url={`/@${subscription.id}`}
+            />
+          ))}
+        </LargeSideBarSection>
+        <hr />
+        <LargeSideBarSection title="Explore">
+          <LargeSideBarItem
+            IconOrImgUrl={Flame}
+            title="Trending"
+            url="/trending"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={ShoppingBag}
+            title="Shopping"
+            url="/shopping"
+          />
+          <LargeSideBarItem IconOrImgUrl={Music2} title="Music" url="/music" />
+          <LargeSideBarItem
+            IconOrImgUrl={Film}
+            title="Movies & TV"
+            url="/movies-tv"
+          />
+          <LargeSideBarItem IconOrImgUrl={Radio} title="Live" url="/live" />
+          <LargeSideBarItem
+            IconOrImgUrl={Gamepad2}
+            title="Gaming"
+            url="/gaming"
+          />
+          <LargeSideBarItem IconOrImgUrl={Newspaper} title="News" url="/news" />
+          <LargeSideBarItem
+            IconOrImgUrl={Trophy}
+            title="Sports"
+            url="/sports"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={Lightbulb}
+            title="Learning"
+            url="/learning"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={Shirt}
+            title="Fashion & Beauty"
+            url="/fashion-beauty"
+          />
+          <LargeSideBarItem
+            IconOrImgUrl={Podcast}
+            title="Podcasts"
+            url="/podcasts"
+          />
+        </LargeSideBarSection>
       </aside>
     </>
   );
@@ -96,14 +200,14 @@ function LargeSideBarSection({
 }
 
 type LargeSideBarItemProps = {
-  Icon: ElementType;
+  IconOrImgUrl: ElementType | string;
   title: string;
   url: string;
   isActive?: boolean;
 };
 
 function LargeSideBarItem({
-  Icon,
+  IconOrImgUrl,
   title,
   url,
   isActive = false,
@@ -118,7 +222,11 @@ function LargeSideBarItem({
           : `w-full flex items-center rounded-lg gap-4 p-3`
       )}
     >
-      <Icon className="w-6 h-6" />
+      {typeof IconOrImgUrl === "string" ? (
+        <img src={IconOrImgUrl} className="w-6 h-6 rounded-full" />
+      ) : (
+        <IconOrImgUrl className="w-6 h-6" />
+      )}
       <div className="whitespace-nowrap overflow-hidden text-ellipsis">
         {title}
       </div>
